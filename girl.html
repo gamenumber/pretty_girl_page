@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>귀여운 미소녀 캐릭터 갤러리</title>
+        <style>
+            body {
+                font-family: "Arial", sans-serif;
+                background-color: #ffd1dc;
+                margin: 0;
+                padding: 0;
+                overflow-x: hidden;
+            }
+            .container {
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 20px;
+            }
+            .image-gallery {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 20px;
+            }
+            .image-container {
+                position: relative;
+                width: 200px;
+                height: 200px;
+                overflow: hidden;
+                border-radius: 15px;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                transition: all 0.3s ease;
+            }
+            .character-image {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                transition: transform 0.3s ease;
+            }
+            .image-container:hover .character-image {
+                transform: scale(1.1);
+            }
+            .sticker {
+                position: absolute;
+                width: 50px;
+                height: 50px;
+                opacity: 0;
+                transition: all 0.3s ease;
+                pointer-events: none;
+            }
+            .image-container:hover {
+                transform: perspective(500px) rotateY(15deg);
+                box-shadow: -10px 10px 20px rgba(0, 0, 0, 0.3);
+            }
+            .glitter {
+                position: absolute;
+                width: 10px;
+                height: 10px;
+                background: radial-gradient(circle, white 0%, transparent 60%);
+                opacity: 0;
+                pointer-events: none;
+            }
+            @keyframes glitterAnimation {
+                0%,
+                100% {
+                    transform: scale(0.3);
+                    opacity: 0;
+                }
+                50% {
+                    transform: scale(1);
+                    opacity: 0.8;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="image-gallery" id="imageGallery"></div>
+        </div>
+
+        <script>
+            const images = [
+                "character1.jpg",
+                "character2.jpg",
+                "character3.jpg",
+                "character4.jpg",
+                "character5.jpg",
+            ];
+
+            const stickers = [
+                "sticker1.png",
+                "sticker2.png",
+                "sticker3.png",
+                "sticker4.png",
+                "sticker5.png",
+            ];
+
+            function createImageElement(src) {
+                const container = document.createElement("div");
+                container.className = "image-container";
+                container.innerHTML = `<img class="character-image" src="${src}" alt="캐릭터 이미지">`;
+
+                // 스티커 추가
+                for (let i = 0; i < 3; i++) {
+                    const sticker = document.createElement("img");
+                    sticker.className = "sticker";
+                    sticker.src =
+                        stickers[Math.floor(Math.random() * stickers.length)];
+                    sticker.style.left = `${Math.random() * 150}px`;
+                    sticker.style.top = `${Math.random() * 150}px`;
+                    sticker.style.transform = `rotate(${
+                        Math.random() * 360
+                    }deg)`;
+                    container.appendChild(sticker);
+                }
+
+                container.addEventListener("mouseenter", () => {
+                    container
+                        .querySelectorAll(".sticker")
+                        .forEach((sticker) => {
+                            sticker.style.opacity = "1";
+                            sticker.style.transform += " scale(1.2)";
+                        });
+                    addGlitter(container);
+                });
+
+                container.addEventListener("mouseleave", () => {
+                    container
+                        .querySelectorAll(".sticker")
+                        .forEach((sticker) => {
+                            sticker.style.opacity = "0";
+                            sticker.style.transform =
+                                sticker.style.transform.replace(
+                                    " scale(1.2)",
+                                    ""
+                                );
+                        });
+                    container
+                        .querySelectorAll(".glitter")
+                        .forEach((glitter) => glitter.remove());
+                });
+
+                return container;
+            }
+
+            function addGlitter(container) {
+                for (let i = 0; i < 20; i++) {
+                    const glitter = document.createElement("div");
+                    glitter.className = "glitter";
+                    glitter.style.left = `${Math.random() * 200}px`;
+                    glitter.style.top = `${Math.random() * 200}px`;
+                    glitter.style.animation = `glitterAnimation ${
+                        Math.random() * 2 + 1
+                    }s infinite`;
+                    container.appendChild(glitter);
+                }
+            }
+
+            function loadImages() {
+                const gallery = document.getElementById("imageGallery");
+                images.forEach((image, index) => {
+                    setTimeout(() => {
+                        const imageElement = createImageElement(image);
+                        gallery.appendChild(imageElement);
+                        imageElement.style.opacity = "0";
+                        imageElement.style.transform = "translateY(20px)";
+                        setTimeout(() => {
+                            imageElement.style.opacity = "1";
+                            imageElement.style.transform = "translateY(0)";
+                        }, 50);
+                    }, index * 200);
+                });
+            }
+
+            window.addEventListener("load", loadImages);
+        </script>
+    </body>
+</html>
